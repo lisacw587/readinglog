@@ -19,6 +19,8 @@ public class Book {
     @Column(name = "publish_year")
     private int year;
 
+    private String status;
+
     // JPA needs a default constructor
     public Book() {}
 
@@ -26,6 +28,7 @@ public class Book {
         this.title = title;
         this.author = author;
         this.year = year;
+        this.status = "to-read";
     }
 
     // getters and setters
@@ -33,9 +36,11 @@ public class Book {
     public String getTitle() { return title; }
     public String getAuthor() { return author; }
     public int getYear() { return year; }
+    public String getStatus() {return status; }
 
     public void setId(Long id) { this.id = id; }
     public void setTitle(String title) { this.title = title; }
     public void setAuthor(String author) { this.author = author; }
     public void setYear(int year) { this.year = year; }
+    public void setStatus(String status) { this.status = status; }
 }

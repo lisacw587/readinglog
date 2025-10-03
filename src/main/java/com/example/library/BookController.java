@@ -37,13 +37,14 @@ public class BookController {
         @RequestParam int year,
         Model model) {
 
-        // save book to DB
+        // save book to DB (status default is to "to-read" in Book entity)
         bookRepository.save(new Book(title, author, year));
 
         // Refresh from DB
         model.addAttribute("books", bookRepository.findAll());
 
-        return "index"; // points to index.html
+        //points to index.html
+        return "index"; 
     }
 
     // POST route to delete a book
@@ -55,6 +56,44 @@ public class BookController {
         // Refresh from DB
         model.addAttribute("books", bookRepository.findAll());
 
-        return "index"; // points to index.html
+
+        // points to index.html
+        return "index"; 
     }
+
+
+    // update status (reading, read, to-read)
+    @PostMapping("/books/status")
+    public String updateBookStatus(@RequestParam Long id, @RequestParam String status, Model model) {
+        Book book = bookRepository.findById(id).orElse(null);
+
+        if (book != null) {
+            // update field
+            book.setStatus(status);
+            bookRepository.save(book);
+        }
+
+        // refresh book list
+        model.addAttribute("books", bookRepository.findAll());
+
+        // back to index.html
+        return "index";
+    }
+
+
+    @GetMapping("/reading")
+    public String getReadingBooks(Model model) {
+        model.addAttribute("books", bookRepository.findByStatus("reading"));
+        // load reading.html
+        return "reading";
+    }
+
+
+    @GetMapping("/read")
+    public String getReadBooks(Model model) {
+        model.addAttribute("books", bookRepository.findByStatus("read"));
+        // loads read.html
+        return "read"; 
+    }
+
 }
