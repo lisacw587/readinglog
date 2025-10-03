@@ -5,6 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class BookController {
@@ -95,5 +96,41 @@ public class BookController {
         // loads read.html
         return "read"; 
     }
+
+    @GetMapping("/books/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        Book book = bookRepository.findById(id).orElse(null);
+        if (book != null) {
+            model.addAttribute("book", book);
+
+            // points to edit.html
+            return "edit"; 
+        }
+        // if book not found
+        return "redirect:/books";
+    }
+
+    // POST route to edit or update book
+    @PostMapping("/books/edit")
+    public String editBook(
+        @RequestParam Long id,
+        @RequestParam String title,
+        @RequestParam String author,
+        @RequestParam int year,
+        Model model) {
+
+            Book book = bookRepository.findById(id).orElse(null);
+
+            if (book != null) {
+                book.setTitle(title);
+                book.setAuthor(author);
+                book.setYear(year);
+                bookRepository.save(book);
+            }
+
+            // refresh book list
+            model.addAttribute("books", bookRepository.findAll());
+            return "index";
+        }
 
 }
